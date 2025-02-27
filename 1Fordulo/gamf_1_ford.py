@@ -10,23 +10,27 @@ def elso_A(input):
     mostani1 = input[0]
     mostani2 = ""
     hossz=0
-    for i in range(len(input)):
+    i = 1
+    while i < len(input):
         karakter = input[i]
-        #print(karakter)
-        hossz+=1
-        if mostani1 == "":
-            mostani1 = karakter
-        elif mostani2 == "" and mostani1 != karakter:
+        if mostani2 == "" and mostani1 != karakter:
             mostani2 = karakter
+            if len(betuk) >0:
+                if mostani2 in betuk[len(betuk)-1]:
+                    while mostani2 == input[i] or mostani1 == input[i]:
+                        i-=1
+                    karakter = input[i]
+                    hossz = -1
         elif mostani1 != karakter and mostani2 != karakter and mostani2 != "":
             hosszak.append(hossz)
             lista = [mostani1,mostani2]
             lista.sort()
             betuk.append(lista)
-            #print(lista[0]+lista[1]+str(hossz))
-            mostani1 = ""
+            mostani1 = karakter
             mostani2 = ""
             hossz = 0
+        hossz+=1
+        i+=1
     index= maxIndex(hosszak)
     print("első feladat a: ",betuk[index][0]+betuk[index][1]+str(hosszak[index]))
 
@@ -38,13 +42,6 @@ def maxIndex(lista):
             max = lista[i]
             maxIndex = i
     return maxIndex
-
-
-#aabaabbaaabb ccc         l1[0] ba l1[1] cc
-#                       l2[0] 10 l2[1] 3
-
-#i i+1 --+-->  i+1 i+2
-#2+6             2+4
 
 def elso_B(input):
     abcCounter = 0
@@ -71,9 +68,9 @@ def elso_C(input):
             y -= 1
         elif input[i] == "d":
             x -= 1
-    #print(x,y)
     distance = math.sqrt(x**2 + y**2)
     print("elso feladat c: " , round(distance))
+    # print("elso feladat c: " , round(math.sqrt((input.count('b')-input.count('d'))**2 + (input.count('a')-input.count('c'))**2)))
 
 def masodik_A(input):
     formazott = input.replace("\n"," ").replace("\t"," ").split(" ")
@@ -114,8 +111,6 @@ def masodik_B(input):
                 legnagyobb = hossz
             hossz = 0
         if hossz>0:
-            #print(formazott[i])
-            #print(len(formazott[i])+1)
             hossz += len(formazott[i])+1
         if formazott[i] =="AZ" or formazott[i] =="A" and hossz == 0:
             hossz+=1
@@ -136,8 +131,6 @@ def masodik_C(input):
             if formazott[i] == formazott[i][::-1]:
                 joszavak.append(formazott[i])
 
-    
-    print(set(joszavak))
     print("masodik feladat c: ",len(set(joszavak)))
 
 def harmadik_A(input):
