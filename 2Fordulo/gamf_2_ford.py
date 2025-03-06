@@ -1,6 +1,7 @@
 import os
 import math
 
+
 def elso_A(input):
     fokok = []
     input = input.split("\n")
@@ -62,16 +63,114 @@ def elso_C(input):
 
     print(f'első feladat c: {nap}|{Ora}:{Perc}')
         
+player = 1
+players = ["alfa","beta","gamma"]
+playerDobasok = [[],[],[]]
+korok = 1
+Teljeskorok = 0
+legnagyobbPoker = 0
+parok = 0
+winner = ''
+gammaFullKor = 0
 
-def masodik_A(idopontok,dontesek):   
+def masodik(dobasok,dontesek):   
+    i = 0
+    lehetoDobasok = 5
+    currDobasok = []
+    global player
+    global players
+    global playerDobasok
+    global Teljeskorok
+    global korok
+    global legnagyobbPoker
+    global parok
+    global winner
+    while(i<len(dobasok)):
+        valasztott = 0
+        lehetosegek = []
+        valasztasok = []
+        for j in range(lehetoDobasok):
+            lehetosegek.append(dobasok[i+j])
+            valasztasok.append(dontesek[i+j])
+            if(dontesek[i+j] == '1'):
+                valasztott += 1
+                currDobasok.append(dobasok[i+j])
+        i+=lehetoDobasok
+        lehetoDobasok-=valasztott
+        if(lehetoDobasok == 0):
+            dobasRendez(currDobasok)
+            if(len(playerDobasok[player-1])==7):
+                winner = players[player-1]
+                break
+            currDobasok = []
+            lehetoDobasok = 5
+            korok += 1
+            if(player != 3):
+                player += 1
+            else:
+                Teljeskorok += 1
+                player = 1
+            
+            
+    print(f'masodik feladat a: {Teljeskorok}')
+    print(f'masodik feladat b: {winner}')
+    print(f'masodik feladat c: {gammaFullKor}')
+    print(f'masodik feladat d: {legnagyobbPoker}')
+    print(f'masodik feladat e: {parok}')
+
+# -1 = semmi
+#  1 = 1 pár pl:11234
+#  2 = 2 pár pl:11223
+#  3 = terc pl:11123
+#  4 = full pl:11122 NEM SZÁMOLHATÓ TERC KÉNT
+#  5 = póker pl:11112 NEM SZÁMOLHATÓ 2 PÁR KÉNT
+#  6 = kissor pl:12345
+#  7 = nagysor pl:23456
+
+def mitDobott(dobas):
+    dobottak = [0,0,0,0,0,0]
+    global legnagyobbPoker
+    global parok
+    global player 
+    global gammaFullKor
+    global korok
+    for szam in dobas:
+        dobottak[int(szam)-1] += 1
     
-    print("masodik feladat a: ", idopontok[0])
+    rendezettDobottak = dobottak.copy()
+    rendezettDobottak.sort()
 
-def masodik_B(idopontok,dontesek):
-    print("masodik feladat b: ", idopontok[0])
+    if(rendezettDobottak == [0,0,0,0,1,4]):
+        poker = maxIndex(dobottak)+1
+        if(poker > legnagyobbPoker):
+            legnagyobbPoker = poker
+        return 5 
+    elif(rendezettDobottak == [0,0,0,0,2,3]):
+        if(player == 3):
+            gammaFullKor = korok
+        return 4 
+    elif(rendezettDobottak == [0,0,0,1,1,3]):
+        return 3 
+    elif(rendezettDobottak == [0,0,0,1,2,2]):
+        parok += 1
+        return 2 
+    elif(rendezettDobottak == [0,0,1,1,1,2]):
+        parok += 1
+        return 1
+    elif(dobottak == [1,1,1,1,1,0]):
+        return 6
+    elif(dobottak == [0,1,1,1,1,1]):
+        return 7
+    else:
+        return -1
 
-def masodik_C(idopontok,dontesek):
-    print("masodik feladat c: ", idopontok[0])
+def dobasRendez(dobas):
+    global playerDobasok
+    global player
+    ertek = mitDobott(dobas)
+    if(ertek > 0):
+        if(ertek not in playerDobasok[player-1]):
+            playerDobasok[player-1].append(ertek)
 
 def harmadik_A(input):
     lista = szavakforditasa(input)
@@ -130,10 +229,52 @@ def getBetu(betupar):
     return matrix[getNum(betupar[0])][getNum(betupar[1])]
 
 def harmadik_B(input):
-    print("harmadik feladat b: ", input[0])
- 
-def harmadik_C(input):
-    print("harmadik feladat c: ", input[0])   
+    betuk = []
+    szoveg = []
+    for i in range(len(input)):
+        if(input[i] in 'AEIOU'):
+            betuk.append(input[i])
+            if(len(betuk)==2):
+                getBetu(betuk)
+                szoveg.append(getBetu(betuk))
+                betuk = []
+    print("harmadik feladat b:", ''.join(szoveg))
+
+codeMatrix = [
+    ["AA", "AE", "AI", "AO", "AU"],
+    ["EA", "EE", "EI", "EO", "EU"],
+    ["IA", "IE", "II", "IO", "IU"],
+    ["OA", "OE", "OI", "OO", "OU"],
+    ["UA", "UE", "UI", "UO", "UU"]
+]
+
+def getCode(betu):
+    for i in range(len(matrix)):
+        for j in range(len(matrix[0])):
+            if(matrix[i][j] == betu):
+                return codeMatrix[i][j]
+
+def harmadik_C(input,szavak):
+    valasz = ""
+    szavak = szavak.replace("\n"," ").split(" ")
+    szavakmgh = szavak.copy()
+    for i in range(len(szavakmgh)):
+        mghk = ""
+        for j in range(len(szavakmgh[i])):
+            if(szavakmgh[i][j] in 'AEIOU'): 
+                mghk += szavakmgh[i][j]
+        szavakmgh[i] = mghk
+    # print(szavakmgh)
+    codes = []
+    for i in range(len(input)):
+        codes.append(getCode(input[i]))
+    # print(codes)
+    for i in range(len(codes)):
+        for j in range(len(szavakmgh)):
+            if(codes[i] == szavakmgh[j]):
+                valasz += szavak[j]+" "
+                break
+    print("harmadik feladat c:",valasz)   
 
 
 
@@ -153,12 +294,10 @@ def main():
     elso_A(idopontok)
     elso_C(szogek)
 
-    masodik_A(idopontok,dontesek)
-    masodik_B(idopontok,dontesek)    
-    masodik_C(idopontok,dontesek)
+    masodik(dobasok,dontesek)
 
     harmadik_A(szoveg)
-    harmadik_B(szoveg)    
-    harmadik_C(szoveg)
+    harmadik_B(szoveg2)    
+    harmadik_C(szoveg3,szavak)
     
 main()
