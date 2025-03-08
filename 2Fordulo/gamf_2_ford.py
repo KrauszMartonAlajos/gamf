@@ -15,7 +15,13 @@ def elso_A(input):
         fokok.append(tempfok)
     index = maxIndex(fokok)
     mindex = minIndex(fokok)
-    print("elso feladat a: ", ':'.join(input[index].split(" ")) ,"\nelso feladat b: ",min(fokok))
+    print("elso feladat a: ", ':'.join(input[index].split(" ")))
+
+    kulonbsegek = []
+    for i in range (len(fokok)-1):
+        kulonbsegek.append(abs(fokok[i]-fokok[i+1]))
+    print("elso feladat b: ",min(kulonbsegek))
+
 
     #print("elso feladat a: ", input[0])
 
@@ -146,7 +152,7 @@ def mitDobott(dobas):
             legnagyobbPoker = poker
         return 5 
     elif(rendezettDobottak == [0,0,0,0,2,3]):
-        if(player == 3):
+        if(player == 3 and gammaFullKor == 0):
             gammaFullKor = korok
         return 4 
     elif(rendezettDobottak == [0,0,0,1,1,3]):
